@@ -42,7 +42,7 @@ def test_register_page_redirect(firefox_browser):
     home_page_url = get_variable('HOME_PAGE_URL')
     register_page_url = get_variable('REGISTER_PAGE_URL')
     firefox_browser.get(home_page_url)
-    login_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[2]/a")
-    login_button.click()
+    register_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[2]/a")
+    register_button.click()
     assert register_page_url == firefox_browser.current_url
 
