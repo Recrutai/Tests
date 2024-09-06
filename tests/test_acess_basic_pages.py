@@ -1,9 +1,10 @@
 import pytest  
+import time
 from selenium import webdriver  
 from selenium.webdriver.common.by import By
 from uteis import get_variable
 '''
-    Testa o acesso básico as páginas de Index, Login e Registro
+    Testa o acesso básico as páginas de Index, Login, Logout Registro
 '''
 
 @pytest.fixture()  
@@ -17,7 +18,7 @@ def firefox_browser():
 
 def test_index_page(firefox_browser):
 
-    url = get_variable('HOME_PAGE_URL')
+    url = get_variable('INDEX_PAGE_URL')
     firefox_browser.get(url)
     main_content = '''
       O Recrutaí é um sistema web que auxilia os estudantes de instituições
@@ -29,9 +30,9 @@ def test_index_page(firefox_browser):
 
 def test_login_page_redirect(firefox_browser):
 
-    home_page_url = get_variable('HOME_PAGE_URL')
+    index_page_url = get_variable('INDEX_PAGE_URL')
     login_page_url = get_variable('LOGIN_PAGE_URL')
-    firefox_browser.get(home_page_url)
+    firefox_browser.get(index_page_url)
     login_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[1]/a")
     login_button.click()
     assert login_page_url == firefox_browser.current_url
@@ -39,10 +40,40 @@ def test_login_page_redirect(firefox_browser):
 
 def test_register_page_redirect(firefox_browser):
 
-    home_page_url = get_variable('HOME_PAGE_URL')
+    index_page_url = get_variable('INDEX_PAGE_URL')
     register_page_url = get_variable('REGISTER_PAGE_URL')
-    firefox_browser.get(home_page_url)
+    firefox_browser.get(index_page_url)
     register_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[2]/a")
     register_button.click()
     assert register_page_url == firefox_browser.current_url
 
+
+def test_login_page_invalid_credential(firefox_browser):
+    index_page_url = get_variable('INDEX_PAGE_URL')
+    firefox_browser.get(index_page_url)
+    login_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[1]/a")
+    login_button.click()
+    email = firefox_browser.find_element(By.CSS_SELECTOR, '#email')
+    email.send_keys('test@gmail.com')
+    password = firefox_browser.find_element(By.CSS_SELECTOR, '#password')
+    password.send_keys('password')
+    submit = firefox_browser.find_element(By.XPATH, '/html/body/div/form/button')
+    submit.click()
+    time.sleep(5)
+    assert 'Login ou Senha Inválidos' in firefox_browser.page_source
+
+
+def test_login_success(firefox_browser):
+    index_page_url = get_variable('INDEX_PAGE_URL')
+    firefox_browser.get(index_page_url)
+    login_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[1]/a")
+    login_button.click()
+    email = firefox_browser.find_element(By.CSS_SELECTOR, '#email')
+    email.send_keys(get_variable('VALIDE_EMAIL'))
+    password = firefox_browser.find_element(By.CSS_SELECTOR, '#password')
+    password.send_keys(get_variable('VALIDE_PASSWORD'))
+    submit = firefox_browser.find_element(By.XPATH, '/html/body/div/form/button')
+    submit.click()
+    time.sleep(5)
+    home_page_url = get_variable('HOME_PAGE_URL')
+    assert home_page_url in firefox_browser.current_url
