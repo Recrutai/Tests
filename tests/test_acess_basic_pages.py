@@ -77,3 +77,38 @@ def test_login_success(firefox_browser):
     time.sleep(5)
     home_page_url = get_variable('HOME_PAGE_URL')
     assert home_page_url in firefox_browser.current_url
+
+
+def test_register_with_invalid_data(firefox_browser):
+    index_page_url = get_variable('INDEX_PAGE_URL')
+    firefox_browser.get(index_page_url)
+    register_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[2]/a")
+    register_button.click()
+    submit_button = firefox_browser.find_element(By.CSS_SELECTOR, '#registerForm > button')
+    submit_button.click()
+    time.sleep(5)
+    assert firefox_browser.switch_to.alert
+
+
+def test_register_user_sucess(firefox_browser):
+    index_page_url = get_variable('INDEX_PAGE_URL')
+    firefox_browser.get(index_page_url)
+    register_button = firefox_browser.find_element(By.XPATH, "/html/body/main/div/div[2]/a")
+    register_button.click()
+    submit_button = firefox_browser.find_element(By.CSS_SELECTOR, '#registerForm > button')
+    first_name = firefox_browser.find_element(By.XPATH, '//*[@id="firstName"]')
+    first_name.send_keys("Henrique")
+    last_name = firefox_browser.find_element(By.XPATH, '//*[@id="lastName"]')
+    last_name.send_keys("Venancio")
+    head_line = firefox_browser.find_element(By.XPATH, '//*[@id="headline"]')
+    head_line.send_keys("Frontend")
+    city = firefox_browser.find_element(By.XPATH, '//*[@id="city"]')
+    city.send_keys("Recife")
+    email = firefox_browser.find_element(By.XPATH, '//*[@id="email"]')
+    email.send_keys("hvs@gmail.com")
+    password = firefox_browser.find_element(By.XPATH, '//*[@id="password"]')
+    password.send_keys("Henrique@123")
+    submit_button.click()
+    time.sleep(5)
+    code_verif_page = get_variable("VERIFICATION_PAGE_URL")
+    assert code_verif_page in firefox_browser.current_url
