@@ -112,3 +112,10 @@ def test_register_user_sucess(firefox_browser):
     time.sleep(5)
     code_verif_page = get_variable("VERIFICATION_PAGE_URL")
     assert code_verif_page in firefox_browser.current_url
+
+
+def test_acess_home_page_not_logged(firefox_browser):
+    home_page = get_variable('HOME_PAGE_URL')
+    firefox_browser.get(home_page)
+    login_page_url = get_variable('LOGIN_PAGE_URL')
+    assert login_page_url in firefox_browser.current_url
